@@ -2,6 +2,7 @@ package de.esg.treedemo.treemgmt.boundary;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import de.esg.treedemo.shared.boundary.PersistenceHelper;
 import de.esg.treedemo.treemgmt.DataCreator;
 import de.esg.treedemo.treemgmt.domain.FullTree;
 import de.esg.treedemo.treemgmt.domain.Node;
@@ -28,7 +30,8 @@ public class TreeRepositoryTest
 	private EntityManager em;
 	private EntityTransaction tx;
 
-	private final long treeId = 7;
+	private static boolean treeIsNotYetCreated = true;
+	private long treeId = -1;
 
 	@BeforeEach
 	void setUpEach()
@@ -39,6 +42,19 @@ public class TreeRepositoryTest
 
 		this.objUnderTest = new TreeRepository();
 		this.objUnderTest.em = this.em;
+
+		if (treeIsNotYetCreated)
+		{
+			// Alle Daten in DB löschen, evt. Initialdaten erzeugen
+			final List<String> initialQueries = new ArrayList<String>();
+			initialQueries.add("DELETE FROM treedb.t_relation");
+			initialQueries.add("DELETE FROM treedb.t_node");
+			initialQueries.add("DELETE FROM treedb.t_tree");
+			PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
+
+			this.treeId = this.saveFullTree(this.objUnderTest, 2, 3);
+			treeIsNotYetCreated = false;
+		}
 	}
 
 	@AfterEach
@@ -53,6 +69,16 @@ public class TreeRepositoryTest
 	{
 		final Optional<Tree> result = this.objUnderTest.findTreeById(this.treeId);
 		assertThat(result).isPresent();
+	}
+
+	@Test
+	public void findFullNodeWithChildren()
+	{
+		var result = this.objUnderTest.findFullNodeWithChildren(this.treeId, 0L);
+		assertThat(result).isPresent();
+		assertThat(result.get().getNode().getId()).isEqualTo(0L);
+		assertThat(result.get().getFullTree().getTree().getId()).isEqualTo(this.treeId);
+		assertThat(result.get().getChildren()).isNotEmpty();
 	}
 
 	@Test
@@ -78,17 +104,12 @@ public class TreeRepositoryTest
 		assertThat(result).isNotEmpty();
 	}
 
-	@Test
-	// @Disabled
-	public void saveFullTree()
+	private long saveFullTree(TreeRepository repository, final long maxLevel, final int cntChildPerNode)
 	{
-		final long maxLevel = 5;
-		final int cntChildPerNode = 3;
 		final FullTree fullTree = DataCreator.generateDummyTree("Testbaum", maxLevel, cntChildPerNode);
-
 		this.tx.begin();
-		this.objUnderTest.saveFullTree(fullTree);
+		repository.saveFullTree(fullTree);
 		this.tx.commit();
-
+		return fullTree.getTree().getId();
 	}
 }

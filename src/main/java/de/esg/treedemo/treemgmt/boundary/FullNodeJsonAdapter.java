@@ -45,6 +45,7 @@ public class FullNodeJsonAdapter implements JsonbAdapter<FullNode, JsonObject>
 	}
 
 	@Override
+	// TODO vollständige Implementierung: Kindknoten fehlen noch
 	public FullNode adaptFromJson(final JsonObject jsonObj) throws Exception
 	{
 		FullNode result;

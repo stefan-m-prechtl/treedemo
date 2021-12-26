@@ -34,7 +34,6 @@ public class FullTreeUnitTest
 		final long maxLevel = 2;
 		final long cntChildPerNode = 3;
 		final FullTree objUnderTest = DataCreator.generateDummyTree("Testbaum", maxLevel, cntChildPerNode);
-		final FullNode root = objUnderTest.getRootNode();
 
 		assertThat(objUnderTest.getChildNodes()).hasSize(12);
 		assertThat(objUnderTest.getRootNode().getChildren()).hasSize(3);

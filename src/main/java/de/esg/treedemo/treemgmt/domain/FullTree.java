@@ -1,6 +1,5 @@
 package de.esg.treedemo.treemgmt.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,13 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FullTree implements Serializable
+public class FullTree
 {
-	private Tree tree;
+	private final Tree tree;
 	private FullNode rootFullNode;
-	private List<FullNode> allChildNodes;
-
-	private Map<String, List<FullNode>> levelLists;
+	private final List<FullNode> allChildNodes;
+	private final Map<String, List<FullNode>> levelLists;
 
 	public FullTree(final String treeName, final Node rootNode)
 	{

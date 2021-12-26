@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Path;
@@ -31,6 +30,46 @@ public class TreeRepository
 
 	}
 
+	public Optional<FullNode> findFullNodeWithChildren(final long treeId, final long nodeId)
+	{
+		Optional<FullNode> result = Optional.empty();
+
+		final Optional<Tree> resultFindTree = this.findTreeById(treeId);
+		if (resultFindTree.isPresent())
+		{
+			final FullTree fullTree = new FullTree(resultFindTree.get());
+			final List<Node> nodes = this.loadNodeWithChildren(treeId, nodeId);
+
+			if (nodes.size() > 0)
+			{
+				var rootNode = nodes.remove(0);
+				var rootFullNode = new FullNode(fullTree, rootNode);
+
+				nodes.forEach(node -> {
+					var fullNode = new FullNode(fullTree, node);
+					rootFullNode.addNode(fullNode);
+				});
+
+				result = Optional.of(rootFullNode);
+			}
+		}
+
+		return result;
+	}
+
+	private List<Node> loadNodeWithChildren(final long treeId, final long nodeId)
+	{
+		List<Node> result = new ArrayList<Node>();
+
+		var sqlQuery = "SELECT * FROM treedb.t_node n where (n.id in (select child_id from treedb.t_relation where parent_id=#nodeID and tree_id=#treeID) and n.tree_id=#treeID) or (n.id=#nodeID and n.tree_id=#treeID) order by n.id";
+		sqlQuery = sqlQuery.replaceAll("#treeID", Long.toString(treeId));
+		sqlQuery = sqlQuery.replaceAll("#nodeID", Long.toString(nodeId));
+
+		result = this.em.createNativeQuery(sqlQuery, Node.class).getResultList();
+
+		return result;
+	}
+
 	public Optional<FullTree> findFullTreeById(final long id) throws Exception
 	{
 		Optional<FullTree> result = Optional.empty();
@@ -42,14 +81,15 @@ public class TreeRepository
 			// Leeren Baum erzeugen
 			final FullTree fullTree = new FullTree(resultFindTree.get());
 
-			// Alle Knoten/Beziehungen laden
+			// Alle DB-Knoten laden
 			final List<Node> nodes = this.loadNodesForTree(id);
+			// DB-Knoten in Business-Knoten umwandeln
 			final Map<Long, FullNode> mapFullNodes = new HashMap<Long, FullNode>(nodes.size());
 			nodes.forEach(node -> {
 				final FullNode fullNode = new FullNode(fullTree, node);
 				mapFullNodes.put(node.getId(), fullNode);
 			});
-
+			// Alee DB-Beziehungen laden
 			final List<Relation> relations = this.loadRelationsForTree(id);
 			// Parent-/Child Verknüpfungen erzeugen:
 			relations.forEach(relation -> {
@@ -71,18 +111,9 @@ public class TreeRepository
 	public List<Tree> loadAllTrees()
 	{
 		List<Tree> result = new ArrayList<>();
-		try
-		{
-			final TypedQuery<Tree> qry = this.em.createNamedQuery(Constants.TreeSelectAll, Tree.class);
-			result = qry.getResultList();
-		}
-		// kein Ergebnis
-		catch (final NoResultException e)
-		{
-			// nichts zu tun: dann wird leere Liste geliefert!
-		}
+		final TypedQuery<Tree> qry = this.em.createNamedQuery(Constants.TreeSelectAll, Tree.class);
+		result = qry.getResultList();
 		return result;
-
 	}
 
 	public Optional<Tree> findTreeById(final long id)
@@ -92,57 +123,31 @@ public class TreeRepository
 		return result;
 	}
 
-	public List<Node> loadNodesForTree(final long treeid)
+	List<Node> loadNodesForTree(final long treeid)
 	{
 		List<Node> result = new ArrayList<Node>();
-		try
-		{
-			final TypedQuery<Node> qry = this.em.createNamedQuery(Constants.NodeSelectByTreeId, Node.class);
-			qry.setParameter("treeId", treeid);
-			result = qry.getResultList();
-
-		}
-		// kein Ergebnis
-		catch (final NoResultException e)
-		{
-			// nichts zu tun: dann wird leere Liste geliefert!
-		}
+		final TypedQuery<Node> qry = this.em.createNamedQuery(Constants.NodeSelectByTreeId, Node.class);
+		qry.setParameter("treeId", treeid);
+		result = qry.getResultList();
 		return result;
 	}
 
-	public List<Relation> loadRelationsForTree(final long treeid)
+	List<Relation> loadRelationsForTree(final long treeid)
 	{
 		List<Relation> result = new ArrayList<Relation>();
-		try
-		{
-			final TypedQuery<Relation> qry = this.em.createNamedQuery(Constants.RelationSelectByTreeId, Relation.class);
-			qry.setParameter("treeId", treeid);
-			result = qry.getResultList();
-
-		}
-		// kein Ergebnis
-		catch (final NoResultException e)
-		{
-			// nichts zu tun: dann wird leere Liste geliefert!
-		}
+		final TypedQuery<Relation> qry = this.em.createNamedQuery(Constants.RelationSelectByTreeId, Relation.class);
+		qry.setParameter("treeId", treeid);
+		result = qry.getResultList();
 		return result;
 	}
 
 	public long getIDFromRootNodeForTree(final long treeid)
 	{
 		long result = -1;
-		try
-		{
-			final TypedQuery<Relation> qry = this.em.createNamedQuery(Constants.RelationSelectLevelZeroByTreeId, Relation.class);
-			qry.setParameter("treeId", treeid);
-			final Relation relation = qry.getResultList().get(0);
-			result = relation.getParentId();
-		}
-		// kein Ergebnis
-		catch (final NoResultException e)
-		{
-			// nichts zu tun
-		}
+		final TypedQuery<Relation> qry = this.em.createNamedQuery(Constants.RelationSelectLevelZeroByTreeId, Relation.class);
+		qry.setParameter("treeId", treeid);
+		final Relation relation = qry.getResultList().get(0);
+		result = relation.getParentId();
 		return result;
 	}
 
@@ -176,7 +181,6 @@ public class TreeRepository
 			allRelations.addAll(relation);
 		});
 
-		final int size = allRelations.size();
 		allRelations.forEach(relation -> {
 			this.em.persist(relation);
 		});

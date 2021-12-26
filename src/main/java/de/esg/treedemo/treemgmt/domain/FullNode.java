@@ -1,21 +1,15 @@
 package de.esg.treedemo.treemgmt.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FullNode implements Serializable
+public class FullNode
 {
-	private Node node;
-	private List<FullNode> children;
-	private FullTree tree;
+	private final Node node;
+	private final List<FullNode> children;
+	private final FullTree tree;
 	private long level;
-
-	public FullNode()
-	{
-
-	}
 
 	public FullNode(final FullTree tree, final Node node)
 	{
@@ -61,5 +55,4 @@ public class FullNode implements Serializable
 	{
 		return Collections.unmodifiableList(this.children);
 	}
-
 }

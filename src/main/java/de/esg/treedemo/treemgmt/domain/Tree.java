@@ -27,9 +27,6 @@ import de.esg.treedemo.treemgmt.boundary.Constants;
 //@formatter:on
 public class Tree
 {
-
-	private static final long serialVersionUID = 1L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
