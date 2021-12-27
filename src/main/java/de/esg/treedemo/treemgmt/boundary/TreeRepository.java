@@ -1,9 +1,7 @@
 package de.esg.treedemo.treemgmt.boundary;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.ejb.Stateless;
@@ -28,6 +26,27 @@ public class TreeRepository
 	public TreeRepository()
 	{
 
+	}
+
+	public Optional<FullTree> findFullTreeById(final long treeId) throws Exception
+	{
+		Optional<FullTree> resultTree = Optional.empty();
+		Optional<FullNode> resultRootNode = Optional.empty();
+
+		resultRootNode = this.findFullNodeWithChildren(treeId, 0L);
+
+		if (resultRootNode.isPresent())
+		{
+			var rootNode = resultRootNode.get();
+
+			// Baum aus RootNode holen
+			final FullTree fullTree = rootNode.getFullTree();
+			// Rootknoten in Ergebnisbaum eintragen
+			fullTree.setRootNode(rootNode);
+
+			resultTree = Optional.of(fullTree);
+		}
+		return resultTree;
 	}
 
 	public Optional<FullNode> findFullNodeWithChildren(final long treeId, final long nodeId)
@@ -70,43 +89,23 @@ public class TreeRepository
 		return result;
 	}
 
-	public Optional<FullTree> findFullTreeById(final long id) throws Exception
-	{
-		Optional<FullTree> result = Optional.empty();
-
-		final Optional<Tree> resultFindTree = this.findTreeById(id);
-
-		if (resultFindTree.isPresent())
-		{
-			// Leeren Baum erzeugen
-			final FullTree fullTree = new FullTree(resultFindTree.get());
-
-			// Alle DB-Knoten laden
-			final List<Node> nodes = this.loadNodesForTree(id);
-			// DB-Knoten in Business-Knoten umwandeln
-			final Map<Long, FullNode> mapFullNodes = new HashMap<Long, FullNode>(nodes.size());
-			nodes.forEach(node -> {
-				final FullNode fullNode = new FullNode(fullTree, node);
-				mapFullNodes.put(node.getId(), fullNode);
-			});
-			// Alee DB-Beziehungen laden
-			final List<Relation> relations = this.loadRelationsForTree(id);
-			// Parent-/Child Verknüpfungen erzeugen:
-			relations.forEach(relation -> {
-				final FullNode parent = mapFullNodes.get(relation.getParentId());
-				parent.setLevel(relation.getLevel());
-				final FullNode child = mapFullNodes.get(relation.getChildId());
-				parent.addNode(child);
-			});
-
-			// Rootknoten in Ergebnisbaum eintragen
-			final FullNode rootFullNode = mapFullNodes.get(0L);
-			fullTree.setRootNode(rootFullNode);
-
-			result = Optional.of(fullTree);
-		}
-		return result;
-	}
+	/*
+	 * public Optional<FullTree> findFullTreeById(final long id) throws Exception { Optional<FullTree> result = Optional.empty();
+	 *
+	 * final Optional<Tree> resultFindTree = this.findTreeById(id);
+	 *
+	 * if (resultFindTree.isPresent()) { // Leeren Baum erzeugen final FullTree fullTree = new FullTree(resultFindTree.get());
+	 *
+	 * // Alle DB-Knoten laden final List<Node> nodes = this.loadNodesForTree(id); // DB-Knoten in Business-Knoten umwandeln final Map<Long, FullNode> mapFullNodes
+	 * = new HashMap<Long, FullNode>(nodes.size()); nodes.forEach(node -> { final FullNode fullNode = new FullNode(fullTree, node); mapFullNodes.put(node.getId(),
+	 * fullNode); }); // Alee DB-Beziehungen laden final List<Relation> relations = this.loadRelationsForTree(id); // Parent-/Child Verknüpfungen erzeugen:
+	 * relations.forEach(relation -> { final FullNode parent = mapFullNodes.get(relation.getParentId()); parent.setLevel(relation.getLevel()); final FullNode child
+	 * = mapFullNodes.get(relation.getChildId()); parent.addNode(child); });
+	 *
+	 * // Rootknoten in Ergebnisbaum eintragen final FullNode rootFullNode = mapFullNodes.get(0L); fullTree.setRootNode(rootFullNode);
+	 *
+	 * result = Optional.of(fullTree); } return result; }
+	 */
 
 	public List<Tree> loadAllTrees()
 	{
