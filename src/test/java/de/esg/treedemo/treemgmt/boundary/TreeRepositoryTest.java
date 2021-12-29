@@ -12,6 +12,8 @@ import javax.persistence.Persistence;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -23,6 +25,9 @@ import de.esg.treedemo.treemgmt.domain.Node;
 import de.esg.treedemo.treemgmt.domain.Relation;
 import de.esg.treedemo.treemgmt.domain.Tree;
 
+
+@Tag("integration-test")
+@DisplayName("Integrationstests TreeRepository/MySQL-Datenbank")
 @TestInstance(Lifecycle.PER_CLASS)
 public class TreeRepositoryTest
 {
@@ -52,7 +57,9 @@ public class TreeRepositoryTest
 			initialQueries.add("DELETE FROM treedb.t_tree");
 			PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
 
-			this.treeId = this.saveFullTree(this.objUnderTest, 2, 3);
+			int maxLevel =5;
+			int cntChildren = 3;
+			this.treeId = this.saveFullTree(this.objUnderTest, maxLevel, cntChildren);
 			treeIsNotYetCreated = false;
 		}
 	}

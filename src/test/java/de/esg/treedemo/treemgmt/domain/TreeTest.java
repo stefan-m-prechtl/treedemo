@@ -46,6 +46,8 @@ public class TreeTest
 
 		// Alle Daten in DB löschen, evt. Initialdaten erzeugen
 		final List<String> initialQueries = new ArrayList<String>();
+		initialQueries.add("DELETE FROM treedb.t_relation");
+		initialQueries.add("DELETE FROM treedb.t_node");
 		initialQueries.add("DELETE FROM treedb.t_tree");
 		PersistenceHelper.runSqlQueries(jpaContext, initialQueries);
 

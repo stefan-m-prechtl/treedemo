@@ -76,15 +76,17 @@ public class TreeRepository
 		return result;
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	private List<Node> loadNodeWithChildren(final long treeId, final long nodeId)
 	{
-		List<Node> result = new ArrayList<Node>();
+		 List<Node> result = new ArrayList<Node>();
 
 		var sqlQuery = "SELECT * FROM treedb.t_node n where (n.id in (select child_id from treedb.t_relation where parent_id=#nodeID and tree_id=#treeID) and n.tree_id=#treeID) or (n.id=#nodeID and n.tree_id=#treeID) order by n.id";
 		sqlQuery = sqlQuery.replaceAll("#treeID", Long.toString(treeId));
 		sqlQuery = sqlQuery.replaceAll("#nodeID", Long.toString(nodeId));
 
-		result = this.em.createNativeQuery(sqlQuery, Node.class).getResultList();
+		result = (List<Node>)this.em.createNativeQuery(sqlQuery, Node.class).getResultList();
 
 		return result;
 	}
