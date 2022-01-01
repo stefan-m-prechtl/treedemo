@@ -2,6 +2,7 @@ package de.esg.treedemo.treemgmt.boundary;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -11,13 +12,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-@Stateless(description = "REST-Interface für FullTree")
+import de.esg.treedemo.shared.boundary.exceptionhandling.ExceptionHandlingInterceptor;
+
+@Stateless(description = "REST-Interface")
 @Path(Constants.pathTree)
+@Interceptors(ExceptionHandlingInterceptor.class)
 public class TreeResource
 {
 	@Context
 	protected UriInfo uriInfo;
-
+	
 	TreeRepository repository;
 
 	@Inject

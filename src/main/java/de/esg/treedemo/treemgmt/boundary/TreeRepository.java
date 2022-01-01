@@ -23,23 +23,22 @@ public class TreeRepository
 	@PersistenceContext(unitName = Constants.PersistenceContext)
 	EntityManager em;
 
-	public TreeRepository()
-	{
-
-	}
-
+	/**
+	 * Baum laden: Rootknoten und seine Kinder.
+	 * @param treeId
+	 * @return
+	 * @throws Exception
+	 */
 	public Optional<FullTree> findFullTreeById(final long treeId) throws Exception
 	{
 		Optional<FullTree> resultTree = Optional.empty();
 		Optional<FullNode> resultRootNode = Optional.empty();
 
 		resultRootNode = this.findFullNodeWithChildren(treeId, 0L);
-
 		if (resultRootNode.isPresent())
 		{
-			var rootNode = resultRootNode.get();
-
 			// Baum aus RootNode holen
+			var rootNode = resultRootNode.get();
 			final FullTree fullTree = rootNode.getFullTree();
 			// Rootknoten in Ergebnisbaum eintragen
 			fullTree.setRootNode(rootNode);
@@ -49,6 +48,12 @@ public class TreeRepository
 		return resultTree;
 	}
 
+	/**
+	 * Knoten eines Baumes mit seinen Kindern laden 
+	 * @param treeId
+	 * @param nodeId
+	 * @return
+	 */
 	public Optional<FullNode> findFullNodeWithChildren(final long treeId, final long nodeId)
 	{
 		Optional<FullNode> result = Optional.empty();
