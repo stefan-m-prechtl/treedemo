@@ -38,11 +38,29 @@ public class TreeResource
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getResourceById(@PathParam("id") final String resourceId) throws Exception
+	public Response getTreeResourceById(@PathParam("id") final String resourceId) throws Exception
 	{
 		final long id = Long.parseLong(resourceId);
 
 		final var result = this.repository.findFullTreeById(id);
+
+		if (result.isPresent())
+		{
+			return Response.ok(result.get()).build();
+		}
+
+		return Response.status(Response.Status.NOT_FOUND).build();
+	}
+	
+	@GET
+	@Path("/{treeid}/node/{nodeid}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNodeResourceById(@PathParam("treeid") final String treeId, @PathParam("nodeid") final String nodeId) throws Exception
+	{
+		final long idTree = Long.parseLong(treeId);
+		final long idNode = Long.parseLong(nodeId);
+
+		final var result = this.repository.findFullNodeWithChildren(idTree, idNode);
 
 		if (result.isPresent())
 		{
