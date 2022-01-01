@@ -73,11 +73,9 @@ public class TreeRepository
 					var fullNode = new FullNode(fullTree, node);
 					rootFullNode.addNode(fullNode);
 				});
-
 				result = Optional.of(rootFullNode);
 			}
 		}
-
 		return result;
 	}
 
