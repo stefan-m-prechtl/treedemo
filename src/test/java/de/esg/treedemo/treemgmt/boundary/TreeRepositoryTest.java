@@ -19,12 +19,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 import de.esg.treedemo.shared.boundary.PersistenceHelper;
-import de.esg.treedemo.treemgmt.DataCreator;
 import de.esg.treedemo.treemgmt.domain.FullTree;
 import de.esg.treedemo.treemgmt.domain.Node;
 import de.esg.treedemo.treemgmt.domain.Relation;
 import de.esg.treedemo.treemgmt.domain.Tree;
-
 
 @Tag("integration-test")
 @DisplayName("Integrationstests TreeRepository/MySQL-Datenbank")
@@ -57,8 +55,8 @@ public class TreeRepositoryTest
 			initialQueries.add("DELETE FROM treedb.t_tree");
 			PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
 
-			int maxLevel =5;
-			int cntChildren = 3;
+			final int maxLevel = 5;
+			final int cntChildren = 3;
 			this.treeId = this.saveFullTree(this.objUnderTest, maxLevel, cntChildren);
 			treeIsNotYetCreated = false;
 		}
@@ -81,7 +79,7 @@ public class TreeRepositoryTest
 	@Test
 	public void findFullNodeWithChildren()
 	{
-		var result = this.objUnderTest.findFullNodeWithChildren(this.treeId, 0L);
+		final var result = this.objUnderTest.findFullNodeWithChildren(this.treeId, 0L);
 		assertThat(result).isPresent();
 		assertThat(result.get().getNode().getId()).isEqualTo(0L);
 		assertThat(result.get().getFullTree().getTree().getId()).isEqualTo(this.treeId);
@@ -111,7 +109,7 @@ public class TreeRepositoryTest
 		assertThat(result).isNotEmpty();
 	}
 
-	private long saveFullTree(TreeRepository repository, final long maxLevel, final int cntChildPerNode)
+	private long saveFullTree(final TreeRepository repository, final long maxLevel, final int cntChildPerNode)
 	{
 		final FullTree fullTree = DataCreator.generateDummyTree("Testbaum", maxLevel, cntChildPerNode);
 		this.tx.begin();

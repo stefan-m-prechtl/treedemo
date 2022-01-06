@@ -16,7 +16,9 @@ public final class Constants
 	public final static String Schema = "treedb";
 
 	public final static String TableTree = "t_tree";
+	public final static String TableView = "v_tree_info";
 	public final static String TreeSelectAll = "TreeSelectAll";
+	public final static String TreeViewSelectAll = "TreeViewSelectAll";
 	public final static String TreeSelectByName = "TreeSelectByName";
 
 	public final static String TableNode = "t_node";

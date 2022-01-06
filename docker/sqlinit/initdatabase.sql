@@ -30,4 +30,21 @@ CREATE TABLE IF NOT EXISTS t_relation (
   CONSTRAINT fkrelation_tree_id FOREIGN KEY(tree_id) REFERENCES t_tree(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE VIEW treedb.v_tree_cntNodes AS 
+	select t.id AS id,t.treename AS name,count(n.id) AS cntnodes 
+	from (treedb.t_tree t join treedb.t_node n) 
+	where (t.id = n.tree_id) 
+	group by t.id,t.treename;
+	
+CREATE VIEW treedb.v_tree_maxlevel AS 
+	select t.id AS id,t.treename AS name,max(r.treelevel) AS maxlevel 
+	from (treedb.t_tree t join treedb.t_relation r) 
+	where (t.id = r.tree_id) 
+	group by t.id,t.treename;	
+	
+CREATE VIEW treedb.v_tree_info AS 
+	select vn.id AS id,vn.name AS name,vn.cntnodes AS cntNodes,vl.maxlevel AS maxLevel 
+	from (treedb.v_tree_cntNodes vn join treedb.v_tree_maxlevel vl) 
+	where (vn.id = vl.id);	
+
 

@@ -1,4 +1,4 @@
-package de.esg.treedemo.treemgmt;
+package de.esg.treedemo.treemgmt.boundary;
 
 import de.esg.treedemo.treemgmt.domain.FullNode;
 import de.esg.treedemo.treemgmt.domain.FullTree;
@@ -6,7 +6,8 @@ import de.esg.treedemo.treemgmt.domain.Node;
 
 public class DataCreator
 {
-	private static long idx = 0;
+	// Rootknoten bekommt immer die Id 0, die anderen Knoten dann aufsteigend...
+	private static long idx = 0L;
 
 	private DataCreator()
 	{
@@ -14,6 +15,9 @@ public class DataCreator
 
 	static public FullTree generateDummyTree(final String treeName, final long maxLevel, final long cntChildPerNode)
 	{
+		// Rootknoten bekommt immer die Id 0, die anderen Knoten dann aufsteigend...
+		idx = 0L;
+
 		final Node rootNode = new Node(idx++, "K1");
 		final FullTree fullTree = new FullTree(treeName, rootNode);
 		for (int i = 0; i < maxLevel; i++)

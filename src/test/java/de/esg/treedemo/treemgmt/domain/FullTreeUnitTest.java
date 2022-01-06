@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
-import de.esg.treedemo.treemgmt.DataCreator;
+import de.esg.treedemo.treemgmt.boundary.DataCreator;
 
 @Tag("unit-test")
 @DisplayName("Pure Unit-Test 'FullTree'")

@@ -52,7 +52,7 @@ public class Tree
 		return this.id;
 	}
 
-	public void setId(long id)
+	public void setId(final long id)
 	{
 		this.id = id;
 	}
@@ -72,8 +72,8 @@ public class Tree
 	{
 		// @formatter:off
 		final var result = MoreObjects.toStringHelper(this)
-				.add("id",this.getId())
-				.add("name",this.name)
+				.add("id", this.getId())
+				.add("name", this.name)
 				.toString();
 		return result;
 		// @formatter:on
@@ -82,24 +82,20 @@ public class Tree
 	@Override
 	public int hashCode()
 	{
-		var values = Arrays.asList(this.name);
+		final var values = Arrays.asList(this.name);
 		return Objects.hashCode(values);
 	}
 
 	@Override
 	public boolean equals(final Object obj)
 	{
-		if (obj == null)
+		if ((obj == null) || (this.getClass() != obj.getClass()))
 		{
 			return false;
 		}
 		if (obj == this)
 		{
 			return true;
-		}
-		if (this.getClass() != obj.getClass())
-		{
-			return false;
 		}
 		final var other = (Tree) obj;
 
