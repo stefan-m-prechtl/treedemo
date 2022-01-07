@@ -15,6 +15,7 @@ import de.esg.treedemo.treemgmt.domain.FullTree;
 import de.esg.treedemo.treemgmt.domain.Node;
 import de.esg.treedemo.treemgmt.domain.Relation;
 import de.esg.treedemo.treemgmt.domain.Tree;
+import de.esg.treedemo.treemgmt.domain.TreeInfo;
 
 @Stateless(description = "Respository für Domänenklassen")
 @Path(Constants.pathTree)
@@ -25,6 +26,7 @@ public class TreeRepository
 
 	/**
 	 * Baum laden: Rootknoten und seine Kinder.
+	 *
 	 * @param treeId
 	 * @return
 	 * @throws Exception
@@ -38,7 +40,7 @@ public class TreeRepository
 		if (resultRootNode.isPresent())
 		{
 			// Baum aus RootNode holen
-			var rootNode = resultRootNode.get();
+			final var rootNode = resultRootNode.get();
 			final FullTree fullTree = rootNode.getFullTree();
 			// Rootknoten in Ergebnisbaum eintragen
 			fullTree.setRootNode(rootNode);
@@ -49,7 +51,8 @@ public class TreeRepository
 	}
 
 	/**
-	 * Knoten eines Baumes mit seinen Kindern laden 
+	 * Knoten eines Baumes mit seinen Kindern laden
+	 *
 	 * @param treeId
 	 * @param nodeId
 	 * @return
@@ -66,11 +69,11 @@ public class TreeRepository
 
 			if (nodes.size() > 0)
 			{
-				var rootNode = nodes.remove(0);
-				var rootFullNode = new FullNode(fullTree, rootNode);
+				final var rootNode = nodes.remove(0);
+				final var rootFullNode = new FullNode(fullTree, rootNode);
 
 				nodes.forEach(node -> {
-					var fullNode = new FullNode(fullTree, node);
+					final var fullNode = new FullNode(fullTree, node);
 					rootFullNode.addNode(fullNode);
 				});
 				result = Optional.of(rootFullNode);
@@ -79,17 +82,19 @@ public class TreeRepository
 		return result;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private List<Node> loadNodeWithChildren(final long treeId, final long nodeId)
 	{
-		 List<Node> result = new ArrayList<Node>();
+		List<Node> result = new ArrayList<Node>();
 
-		var sqlQuery = "SELECT * FROM treedb.t_node n where (n.id in (select child_id from treedb.t_relation where parent_id=#nodeID and tree_id=#treeID) and n.tree_id=#treeID) or (n.id=#nodeID and n.tree_id=#treeID) order by n.id";
+		// var sqlQuery = "SELECT * FROM treedb.t_node n where (n.id in (select child_id from treedb.t_relation where parent_id=#nodeID and tree_id=#treeID) and
+		// n.tree_id=#treeID) or (n.id=#nodeID and n.tree_id=#treeID) order by n.id";
+		var sqlQuery = "SELECT * FROM treedb.t_node n where (n.id=#nodeID and n.tree_id=#treeID)union all SELECT * FROM treedb.t_node n where (n.tree_id=#treeID and (n.id in (select child_id from treedb.t_relation r where r.parent_id=#nodeID and r.tree_id=#treeID)))	order by id";
+
 		sqlQuery = sqlQuery.replaceAll("#treeID", Long.toString(treeId));
 		sqlQuery = sqlQuery.replaceAll("#nodeID", Long.toString(nodeId));
 
-		result = (List<Node>)this.em.createNativeQuery(sqlQuery, Node.class).getResultList();
+		result = this.em.createNativeQuery(sqlQuery, Node.class).getResultList();
 
 		return result;
 	}
@@ -116,6 +121,14 @@ public class TreeRepository
 	{
 		List<Tree> result = new ArrayList<>();
 		final TypedQuery<Tree> qry = this.em.createNamedQuery(Constants.TreeSelectAll, Tree.class);
+		result = qry.getResultList();
+		return result;
+	}
+
+	public List<TreeInfo> loadAllTreeInfos()
+	{
+		List<TreeInfo> result = new ArrayList<>();
+		final TypedQuery<TreeInfo> qry = this.em.createNamedQuery(Constants.TreeViewSelectAll, TreeInfo.class);
 		result = qry.getResultList();
 		return result;
 	}
