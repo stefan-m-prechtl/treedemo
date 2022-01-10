@@ -22,7 +22,7 @@ public class DataCreator
 		final FullTree fullTree = new FullTree(treeName, rootNode);
 		for (int i = 0; i < maxLevel; i++)
 		{
-			System.out.println("Create node for leve:" + i);
+			System.out.println("Create node for level:" + i);
 			final var currentLevelList = fullTree.getLevelList(i);
 			currentLevelList.forEach(fullnode -> {
 				for (int c = 0; c < cntChildPerNode; c++)

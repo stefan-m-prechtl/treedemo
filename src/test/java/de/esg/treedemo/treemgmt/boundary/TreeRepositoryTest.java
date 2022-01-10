@@ -109,6 +109,13 @@ public class TreeRepositoryTest
 		assertThat(result).isNotEmpty();
 	}
 
+	@Test
+	public void findCompleteFullTreeById() throws Exception
+	{
+		final Optional<FullTree> result = this.objUnderTest.findCompleteFullTreeById(this.treeId);
+		assertThat(result).isNotEmpty();
+	}
+
 	private long saveFullTree(final TreeRepository repository, final long maxLevel, final int cntChildPerNode)
 	{
 		final FullTree fullTree = DataCreator.generateDummyTree("Testbaum", maxLevel, cntChildPerNode);
