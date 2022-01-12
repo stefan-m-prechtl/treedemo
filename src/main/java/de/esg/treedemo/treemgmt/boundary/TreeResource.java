@@ -1,6 +1,7 @@
 package de.esg.treedemo.treemgmt.boundary;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -51,11 +52,22 @@ public class TreeResource
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getTreeResourceById(@PathParam("id") final String resourceId) throws Exception
+	public Response getTreeResourceById(@PathParam("id") final String resourceId, @QueryParam("all") final String loadAll) throws Exception
 	{
+		final Optional<FullTree> result;
+
 		final long id = Long.parseLong(resourceId);
 
-		final var result = this.repository.findFullTreeById(id);
+		final var loadLazy = Strings.isNullOrEmpty(loadAll) ? true : false;
+
+		if (loadLazy)
+		{
+			result = this.repository.findFullTreeById(id);
+		}
+		else
+		{
+			result = this.repository.findCompleteFullTreeById(id);
+		}
 
 		if (result.isPresent())
 		{
@@ -100,8 +112,7 @@ public class TreeResource
 		{
 			maxLevel = Long.parseLong(maxTreeLevel);
 			cntChildPerNode = Long.parseLong(countChildren);
-		}
-		catch (final NumberFormatException e)
+		} catch (final NumberFormatException e)
 		{
 			return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), "Numerische Parameter nicht numerisch").build();
 		}

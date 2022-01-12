@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -113,15 +114,15 @@ public class TreeRepository
 			final FullTree fullTree = new FullTree(resultFindTree.get());
 
 			// Alle DB-Knoten laden
-			final List<Node> nodes = this.loadNodesForTree(id);
+			final Stream<Node> nodes = this.loadNodesForTree(id);
 			// DB-Knoten in Business-Knoten umwandeln
-			final Map<Long, FullNode> mapFullNodes = new HashMap<Long, FullNode>(nodes.size());
+			final Map<Long, FullNode> mapFullNodes = new HashMap<Long, FullNode>();
 			nodes.forEach(node -> {
 				final FullNode fullNode = new FullNode(fullTree, node);
 				mapFullNodes.put(node.getId(), fullNode);
 			});
 			// Alle DB-Beziehungen laden
-			final List<Relation> relations = this.loadRelationsForTree(id);
+			final Stream<Relation> relations = this.loadRelationsForTree(id);
 			// Parent-/Child Verknüpfungen erzeugen:
 			relations.forEach(relation -> {
 				final FullNode parent = mapFullNodes.get(relation.getParentId());
@@ -162,21 +163,20 @@ public class TreeRepository
 		return result;
 	}
 
-	List<Node> loadNodesForTree(final long treeid)
+	Stream<Node> loadNodesForTree(final long treeid)
 	{
-		List<Node> result = new ArrayList<Node>();
 		final TypedQuery<Node> qry = this.em.createNamedQuery(Constants.NodeSelectByTreeId, Node.class);
 		qry.setParameter("treeId", treeid);
-		result = qry.getResultList();
+		final Stream<Node> result = qry.getResultStream();
 		return result;
 	}
 
-	List<Relation> loadRelationsForTree(final long treeid)
+	Stream<Relation> loadRelationsForTree(final long treeid)
 	{
-		List<Relation> result = new ArrayList<Relation>();
+
 		final TypedQuery<Relation> qry = this.em.createNamedQuery(Constants.RelationSelectByTreeId, Relation.class);
 		qry.setParameter("treeId", treeid);
-		result = qry.getResultList();
+		final Stream<Relation> result = qry.getResultStream();
 		return result;
 	}
 
@@ -225,7 +225,7 @@ public class TreeRepository
 		});
 	}
 
-	public List<Relation> buildRelationForNode(final FullNode fullNode)
+	private List<Relation> buildRelationForNode(final FullNode fullNode)
 	{
 		final List<Relation> result = new ArrayList<Relation>();
 

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -18,11 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
-import de.esg.treedemo.shared.boundary.PersistenceHelper;
 import de.esg.treedemo.treemgmt.domain.FullTree;
 import de.esg.treedemo.treemgmt.domain.Node;
 import de.esg.treedemo.treemgmt.domain.Relation;
 import de.esg.treedemo.treemgmt.domain.Tree;
+import de.esg.treedemo.treemgmt.domain.TreeInfo;
 
 @Tag("integration-test")
 @DisplayName("Integrationstests TreeRepository/MySQL-Datenbank")
@@ -53,11 +54,11 @@ public class TreeRepositoryTest
 			initialQueries.add("DELETE FROM treedb.t_relation");
 			initialQueries.add("DELETE FROM treedb.t_node");
 			initialQueries.add("DELETE FROM treedb.t_tree");
-			PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
+			// PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
 
 			final int maxLevel = 5;
 			final int cntChildren = 3;
-			this.treeId = this.saveFullTree(this.objUnderTest, maxLevel, cntChildren);
+			// this.treeId = this.saveFullTree(this.objUnderTest, maxLevel, cntChildren);
 			treeIsNotYetCreated = false;
 		}
 	}
@@ -67,6 +68,14 @@ public class TreeRepositoryTest
 	{
 		this.em.clear();
 		this.em.close();
+	}
+
+	@Test
+	public void loadAllTreeInfos()
+	{
+		final List<TreeInfo> result = this.objUnderTest.loadAllTreeInfos();
+		assertThat(result).isNotEmpty();
+		assertThat(result.size()).isGreaterThan(0);
 	}
 
 	@Test
@@ -89,17 +98,15 @@ public class TreeRepositoryTest
 	@Test
 	public void loadNodesForTree()
 	{
-		final List<Node> result = this.objUnderTest.loadNodesForTree(this.treeId);
-		assertThat(result).isNotEmpty();
-		assertThat(result.size()).isGreaterThan(0);
+		final Stream<Node> result = this.objUnderTest.loadNodesForTree(this.treeId);
+		assertThat(result.findAny().isPresent()).isTrue();
 	}
 
 	@Test
 	public void loadRelationsForTree()
 	{
-		final List<Relation> result = this.objUnderTest.loadRelationsForTree(this.treeId);
-		assertThat(result).isNotEmpty();
-		assertThat(result.size()).isGreaterThan(0);
+		final Stream<Relation> result = this.objUnderTest.loadRelationsForTree(this.treeId);
+		assertThat(result.findAny().isPresent()).isTrue();
 	}
 
 	@Test
