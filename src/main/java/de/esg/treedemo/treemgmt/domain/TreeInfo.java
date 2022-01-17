@@ -30,7 +30,7 @@ public class TreeInfo
 	@Id
 	private long id;
 	private String name;
-	@JsonbProperty("countNodes")
+	@JsonbProperty("countnodes")
 	private long cntNodes;
 	@JsonbProperty("maxlevel")
 	private long maxLevel;
