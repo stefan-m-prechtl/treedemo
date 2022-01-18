@@ -2,10 +2,10 @@ version: '3.7'
 
 services:
  treedbserver:
-  image: mysql:8.0.12
+  image: mariadb:10.3.32-focal
   container_name: tree_dbserver
   volumes:
-  - ./mysql8/data1:/var/lib/mysql
+  - ./dbdata:/var/lib/mysql
   - ./sqlinit:/docker-entrypoint-initdb.d/
   ports:
   - "3306:3306"

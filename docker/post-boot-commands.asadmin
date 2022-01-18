@@ -1,16 +1,16 @@
-create-jdbc-connection-pool --datasourceClassname=com.mysql.cj.jdbc.MysqlDataSource --resType=javax.sql.DataSource MySQL8Pool
-set resources.jdbc-connection-pool.MySQL8Pool.property.serverTimezone=Europe/Berlin 
-set resources.jdbc-connection-pool.MySQL8Pool.property.useSSL=false 
-set resources.jdbc-connection-pool.MySQL8Pool.property.allowPublicKeyRetrieval=true
-set resources.jdbc-connection-pool.MySQL8Pool.property.serverName=tree_dbserver
-set resources.jdbc-connection-pool.MySQL8Pool.property.password=admin 
-set resources.jdbc-connection-pool.MySQL8Pool.property.user=root 
-set resources.jdbc-connection-pool.MySQL8Pool.property.portNumber=3306
+create-jdbc-connection-pool --datasourceClassname=org.mariadb.jdbc.MariaDbDataSource --resType=javax.sql.DataSource MariaDbPool
+set resources.jdbc-connection-pool.MariaDbPool.property.serverTimezone=Europe/Berlin 
+set resources.jdbc-connection-pool.MariaDbPool.property.useSSL=false 
+set resources.jdbc-connection-pool.MariaDbPool.property.allowPublicKeyRetrieval=true
+set resources.jdbc-connection-pool.MariaDbPool.property.serverName=tree_dbserver
+set resources.jdbc-connection-pool.MariaDbPool.property.password=admin 
+set resources.jdbc-connection-pool.MariaDbPool.property.user=root 
+set resources.jdbc-connection-pool.MariaDbPool.property.portNumber=3306
 
 # Tree-Database
-create-jdbc-resource --enabled=true --poolName=MySQL8Pool --target=domain jdbc/__MySQL8Tree
-create-resource-ref --enabled=true --target=server jdbc/__MySQL8Tree
-set resources.jdbc-resource.jdbc/__MySQL8Workflow.property.databaseName=treedbworkflowdb
+create-jdbc-resource --enabled=true --poolName=MariaDbPool --target=domain jdbc/__MariaDbTree
+create-resource-ref --enabled=true --target=server jdbc/__MariaDbTree
+set resources.jdbc-resource.jdbc/__MariaDbTree.property.databaseName=treedb
 
 # Dynamic Re-Deploy (default: deaktiviert)
 set configs.config.server-config.admin-service.das-config.dynamic-reload-enabled=true
