@@ -2,7 +2,7 @@
 /.settings/
 /build/
 /bin/
-/docker/mysql8/
+/docker/dbdata/
 /docker/autodeploy/
 /.externalToolBuilders/
 /.classpath

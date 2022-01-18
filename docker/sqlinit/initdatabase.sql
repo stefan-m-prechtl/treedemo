@@ -3,6 +3,8 @@ CREATE DATABASE IF NOT EXISTS treedb
   CHARACTER SET 'utf8' 
   COLLATE 'utf8_general_ci';
 
+USE treedb;
+
 -- Sequence als ID-Generator
 --CREATE SEQUENCE treedb.seq_tree_id;
 
