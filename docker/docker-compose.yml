@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
  treedbserver:
-  image: mariadb:10.3.32-focal
+  image: mariadb:10.6.5-focal
   container_name: tree_dbserver
   volumes:
   - ./dbdata:/var/lib/mysql

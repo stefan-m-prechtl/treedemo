@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
+import de.esg.treedemo.shared.boundary.PersistenceHelper;
 import de.esg.treedemo.treemgmt.domain.FullTree;
 import de.esg.treedemo.treemgmt.domain.Node;
 import de.esg.treedemo.treemgmt.domain.Relation;
@@ -54,11 +55,11 @@ public class TreeRepositoryTest
 			initialQueries.add("DELETE FROM treedb.t_relation");
 			initialQueries.add("DELETE FROM treedb.t_node");
 			initialQueries.add("DELETE FROM treedb.t_tree");
-			// PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
+			PersistenceHelper.runSqlQueries("testtreedb", initialQueries);
 
 			final int maxLevel = 5;
 			final int cntChildren = 3;
-			// this.treeId = this.saveFullTree(this.objUnderTest, maxLevel, cntChildren);
+			this.treeId = this.saveFullTree(this.objUnderTest, maxLevel, cntChildren);
 			treeIsNotYetCreated = false;
 		}
 	}
