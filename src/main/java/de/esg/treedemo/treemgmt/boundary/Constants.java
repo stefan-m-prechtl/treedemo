@@ -30,4 +30,6 @@ public final class Constants
 	public final static String RelationSelectByTreeId = "RelationSelectByTreeId";
 	public final static String RelationSelectLevelZeroByTreeId = "RelationSelectLevelZeroByTreeId";
 
+	public final static String TableProject = "t_project";
+
 }

@@ -36,6 +36,13 @@ CREATE TABLE IF NOT EXISTS treedb.t_relation (
 ) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
 
+CREATE TABLE IF NOT EXISTS treedb.t_project (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  projectname varchar(50) NOT NULL,
+  PRIMARY KEY (id)
+) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
+
+
 CREATE VIEW IF NOT EXISTS treedb.v_tree_cntNodes AS 
 	select t.id AS id,t.treename AS name,count(n.id) AS cntnodes 
 	from (t_tree t join t_node n) 
