@@ -10,6 +10,7 @@ public final class Constants
 	// REST Resource
 	public final static String pathTree = "/treemgmt/fulltree";
 	public final static String pathPing = "/ping";
+	public final static String pathUser = "/user";
 	public final static String PersistenceContext = "treedb";
 
 	// JPA: Schema, Tabelle, Named Queries

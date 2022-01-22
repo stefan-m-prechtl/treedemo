@@ -4,12 +4,11 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
-import javax.security.enterprise.SecurityContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -27,13 +26,14 @@ public class PingResource
 	@Inject
 	@ConfigProperty(name = "PINGMSG")
 	String pingMsg;
-	
+
 	@Inject
-	private SecurityContext securityContext;
+	private Principal principal;
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll()
 	public Response ping()
 	{
 		final var now = LocalDateTime.now();
@@ -48,9 +48,11 @@ public class PingResource
 				.build();
 		// @formatter:on
 
+		System.out.println("Ping called by: " + this.principal.getName());
+
 		return Response.ok(result).build();
 	}
-	
+
 	@GET
 	@Path("/admin")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -71,7 +73,7 @@ public class PingResource
 
 		return Response.ok(result).build();
 	}
-	
+
 	@GET
 	@Path("/reader")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -89,8 +91,6 @@ public class PingResource
 				.add("time", timeFormated)
 				.build();
 		// @formatter:on
-		
-		final Principal principial = this.securityContext.getCallerPrincipal();
 
 		return Response.ok(result).build();
 	}

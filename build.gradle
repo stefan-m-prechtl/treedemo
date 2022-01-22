@@ -20,6 +20,9 @@ dependencies {
 	// Commons... (aus Gründen der Build-/Deploy-Performance im lib-Verzeichnis vom Application-Server)
 	compileOnly group: 'com.google.guava', name: 'guava', version: '28.1-jre'
 	
+	// Json Web Token (JWT)
+	implementation 'com.auth0:java-jwt:3.18.3'
+	
 	// ---- TESTING ---------------------------------------------------------------------------------------------
 	// JUnit5-Testing
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
