@@ -2,9 +2,11 @@ package de.esg.treedemo.treemgmt.boundary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.ejb.Stateless;
@@ -13,6 +15,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.Path;
 
+import de.esg.treedemo.treemgmt.domain.Closure;
 import de.esg.treedemo.treemgmt.domain.FullNode;
 import de.esg.treedemo.treemgmt.domain.FullTree;
 import de.esg.treedemo.treemgmt.domain.Node;
@@ -222,6 +225,35 @@ public class TreeRepository
 
 		allRelations.forEach(relation -> {
 			this.em.persist(relation);
+		});
+
+		// 4. Alle Closures speichern
+		final Set<Closure> allClosures = new HashSet<>();
+		final long treeId = fullTree.getId();
+		var rootClosure = new Closure(rootNode.getId(), rootNode.getId(), treeId, 0);
+		allClosures.add(rootClosure);
+
+		fullTree.getChildNodes().forEach(fullNode -> {
+
+			// Eigener Verweis mit Tiefe 0
+			long ancestorID = fullNode.getId();
+			long descendantID = fullNode.getId();
+			long depth = 0;
+			var closure = new Closure(ancestorID, descendantID, treeId, 0);
+			allClosures.add(closure);
+
+			// Verweise der Tiefe 1,2,... erzeugen
+			var path = fullNode.getPath();
+			for (int idx = path.size() - 1; idx >= 0; idx--)
+			{
+				ancestorID = path.get(idx).getId();
+				closure = new Closure(ancestorID, descendantID, treeId, depth++);
+				allClosures.add(closure);
+			}
+		});
+
+		allClosures.forEach(closure -> {
+			this.em.persist(closure);
 		});
 	}
 

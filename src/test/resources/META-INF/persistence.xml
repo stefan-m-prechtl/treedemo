@@ -8,6 +8,7 @@
 		<class>de.esg.treedemo.treemgmt.domain.Tree</class>
 		<class>de.esg.treedemo.treemgmt.domain.Node</class>
 		<class>de.esg.treedemo.treemgmt.domain.Relation</class>
+		<class>de.esg.treedemo.treemgmt.domain.Closure</class>
 		<class>de.esg.treedemo.treemgmt.domain.TreeInfo</class>
 		
 		<class>de.esg.treedemo.projectmgmt.domain.Project</class>

@@ -18,6 +18,10 @@ public class FullTree
 	{
 		this.tree = new Tree(treeName);
 		this.rootFullNode = new FullNode(this, rootNode);
+
+		ArrayList<Node> path = new ArrayList<Node>();
+		path.add(rootFullNode.getNode());
+		this.rootFullNode.setPath(path);
 		this.allChildNodes = new ArrayList<FullNode>();
 		this.levelLists = new HashMap<String, List<FullNode>>();
 
@@ -50,6 +54,11 @@ public class FullTree
 	public Tree getTree()
 	{
 		return this.tree;
+	}
+
+	public long getId()
+	{
+		return this.tree.getId();
 	}
 
 	public void addNode(final FullNode node)

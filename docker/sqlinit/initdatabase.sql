@@ -35,6 +35,16 @@ CREATE TABLE IF NOT EXISTS treedb.t_relation (
   CONSTRAINT fkrelation_tree_id FOREIGN KEY (tree_id) REFERENCES treedb.t_tree (id)
 ) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
 
+CREATE TABLE IF NOT EXISTS treedb.t_closure (
+  ancestor_id int(11) NOT NULL,
+  descendant_id int(11) NOT NULL,
+  tree_id int(11) NOT NULL,
+  depth int(11) NOT NULL,
+  PRIMARY KEY (tree_id,ancestor_id,descendant_id),
+  KEY idxrelation_tree_id (tree_id),
+  CONSTRAINT fkclosure_tree_id FOREIGN KEY (tree_id) REFERENCES treedb.t_tree (id)
+) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci';
+
 
 CREATE TABLE IF NOT EXISTS treedb.t_project (
   id int(11) NOT NULL AUTO_INCREMENT,
